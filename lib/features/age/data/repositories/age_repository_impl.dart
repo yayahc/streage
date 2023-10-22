@@ -13,7 +13,7 @@ class AgeRepositoryImpl implements IAgeRepository {
   AgeRepositoryImpl(this._ageDataSource);
 
   @override
-  Future<Either<IBaseAppError, void>> createAge(CreateAgeParam param) {
+  Future<Either<IBaseAppError, AgeModel>> createAge(CreateAgeParam param) {
     final age = AgeModel.fromCreateAgeParam(param: param);
     return _ageDataSource.createAge(age);
   }
@@ -24,12 +24,12 @@ class AgeRepositoryImpl implements IAgeRepository {
   }
 
   @override
-  Future<Either<IBaseAppError, AgeModel>> getAge() {
+  Future<Either<IBaseAppError, List<AgeModel>>> getAge() {
     return _ageDataSource.getAgeData();
   }
 
   @override
-  Future<Either<IBaseAppError, void>> updateAge(UpdateAgeParam param) {
+  Future<Either<IBaseAppError, AgeModel>> updateAge(UpdateAgeParam param) {
     final age = AgeModel.fromUpdateAgeParam(param: param);
     return _ageDataSource.updateAgeData(age);
   }

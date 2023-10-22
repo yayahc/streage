@@ -1,4 +1,5 @@
 class UpdateAgeParam {
+  final int id;
   final int years;
   final int months;
   final int days;
@@ -9,6 +10,7 @@ class UpdateAgeParam {
   final int microseconds;
 
   UpdateAgeParam({
+    required this.id,
     required this.years,
     required this.months,
     required this.days,

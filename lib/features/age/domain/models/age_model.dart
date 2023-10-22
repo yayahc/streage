@@ -7,10 +7,9 @@ part 'age_model.g.dart';
 
 @collection
 class AgeModel extends Age {
-  Id id = Isar.autoIncrement;
-
   AgeModel(
-      {required super.years,
+      {required super.id,
+      required super.years,
       required super.months,
       required super.days,
       required super.hours,
@@ -20,8 +19,33 @@ class AgeModel extends Age {
       required super.microseconds});
 
   // Create Age
+  factory AgeModel.createAge({
+    required id,
+    required years,
+    required months,
+    required days,
+    required hours,
+    required minutes,
+    required seconds,
+    required milliseconds,
+    required microseconds,
+  }) {
+    return AgeModel(
+        id: id,
+        years: years,
+        months: months,
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        milliseconds: milliseconds,
+        microseconds: microseconds);
+  }
+
+  // Create Age from param
   factory AgeModel.fromCreateAgeParam({required CreateAgeParam param}) {
     return AgeModel(
+        id: null,
         years: param.years,
         months: param.months,
         days: param.days,
@@ -32,9 +56,10 @@ class AgeModel extends Age {
         microseconds: param.microseconds);
   }
 
-  // Create Age
+  // Create Age from param
   factory AgeModel.fromUpdateAgeParam({required UpdateAgeParam param}) {
     return AgeModel(
+        id: param.id,
         years: param.years,
         months: param.months,
         days: param.days,

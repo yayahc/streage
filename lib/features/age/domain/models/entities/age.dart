@@ -1,4 +1,7 @@
+import 'package:isar/isar.dart';
+
 class Age {
+  final Id? id;
   final int years;
   final int months;
   final int days;
@@ -8,7 +11,8 @@ class Age {
   final int milliseconds;
   final int microseconds;
   Age(
-      {required this.years,
+      {required this.id,
+      required this.years,
       required this.months,
       required this.days,
       required this.hours,

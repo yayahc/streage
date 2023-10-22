@@ -106,6 +106,7 @@ AgeModel _ageModelDeserialize(
   final object = AgeModel(
     days: reader.readLong(offsets[0]),
     hours: reader.readLong(offsets[1]),
+    id: id,
     microseconds: reader.readLong(offsets[2]),
     milliseconds: reader.readLong(offsets[3]),
     minutes: reader.readLong(offsets[4]),
@@ -113,7 +114,6 @@ AgeModel _ageModelDeserialize(
     seconds: reader.readLong(offsets[6]),
     years: reader.readLong(offsets[7]),
   );
-  object.id = id;
   return object;
 }
 
@@ -146,16 +146,14 @@ P _ageModelDeserializeProp<P>(
 }
 
 Id _ageModelGetId(AgeModel object) {
-  return object.id;
+  return object.id ?? Isar.autoIncrement;
 }
 
 List<IsarLinkBase<dynamic>> _ageModelGetLinks(AgeModel object) {
   return [];
 }
 
-void _ageModelAttach(IsarCollection<dynamic> col, Id id, AgeModel object) {
-  object.id = id;
-}
+void _ageModelAttach(IsarCollection<dynamic> col, Id id, AgeModel object) {}
 
 extension AgeModelQueryWhereSort on QueryBuilder<AgeModel, AgeModel, QWhere> {
   QueryBuilder<AgeModel, AgeModel, QAfterWhere> anyId() {
@@ -340,7 +338,23 @@ extension AgeModelQueryFilter
     });
   }
 
-  QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'id',
+      ));
+    });
+  }
+
+  QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'id',
+      ));
+    });
+  }
+
+  QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idEqualTo(Id? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -350,7 +364,7 @@ extension AgeModelQueryFilter
   }
 
   QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idGreaterThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -363,7 +377,7 @@ extension AgeModelQueryFilter
   }
 
   QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idLessThan(
-    Id value, {
+    Id? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -376,8 +390,8 @@ extension AgeModelQueryFilter
   }
 
   QueryBuilder<AgeModel, AgeModel, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
+    Id? lower,
+    Id? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
