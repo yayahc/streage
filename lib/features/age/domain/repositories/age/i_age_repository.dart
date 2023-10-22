@@ -8,9 +8,9 @@ import 'package:streage/features/age/domain/usecases/params/update_age_param.dar
 abstract class IAgeRepository {
   Future<Either<IBaseAppError, AgeModel>> getAge();
 
-  Future<Either<IBaseAppError, AgeModel>> createAge(CreateAgeParam param);
+  Future<Either<IBaseAppError, void>> createAge(CreateAgeParam param);
 
-  Future<Either<IBaseAppError, AgeModel>> updateAge(UpdateAgeParam param);
+  Future<Either<IBaseAppError, void>> updateAge(UpdateAgeParam param);
 
   Future<Either<IBaseAppError, void>> deleteAge(DeleteAgeParam param);
 }
