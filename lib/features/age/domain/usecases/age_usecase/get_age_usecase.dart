@@ -5,12 +5,12 @@ import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/repositories/age/i_age_repository.dart';
 import 'package:streage/features/age/domain/usecases/params/get_age_param.dart';
 
-class GetAgeUsecase implements Usecase<GetAgeParam, List<AgeModel>> {
+class GetAgeUsecase implements Usecase<GetAgeParam, AgeModel?> {
   final IAgeRepository _ageRepository;
   GetAgeUsecase(this._ageRepository);
 
   @override
-  Future<Either<IBaseAppError, List<AgeModel>>> trigger(param) {
-    return _ageRepository.getAge();
+  Future<Either<IBaseAppError, AgeModel?>> trigger(GetAgeParam param) {
+    return _ageRepository.getAge(param.id);
   }
 }

@@ -8,8 +8,6 @@ import 'package:streage/features/age/data/datasources/local_data_source/local_da
 import 'package:streage/features/age/data/datasources/local_data_source/local_datasource/age/isar_age_local_datasource_imp.dart';
 import 'package:streage/features/age/data/repositories/age_repository_impl.dart';
 import 'package:streage/features/age/domain/controller/age_controller.dart';
-import 'package:streage/features/age/domain/models/age_model.dart';
-import 'package:streage/features/age/domain/models/entities/age.dart';
 import 'package:streage/features/age/domain/repositories/age/i_age_repository.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
@@ -23,33 +21,9 @@ import 'package:streage/features/age/services/isar/isar_service.dart';
 
 final locator = GetIt.instance;
 
-Future<void> injectDependencies() async {
+Future<void> injectDependencies(IsarService isarService) async {
   // singleton
-  locator.registerSingleton(Age(
-      id: 0,
-      years: 0,
-      months: 0,
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-      microseconds: 0));
-  locator.registerSingleton(AgeModel(
-      id: 0,
-      years: 0,
-      months: 0,
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      milliseconds: 0,
-      microseconds: 0));
-  locator.registerSingleton(() => IsarService());
-  locator.registerSingleton(IAgeRepository);
   locator.registerSingleton(Usecase);
-  locator.registerSingleton(IBaseAppError);
-  locator.registerSingleton(IAgeLocalDataSource);
   locator.registerSingleton(UpdateAgeParam(
       id: 0,
       years: 0,
@@ -81,15 +55,15 @@ Future<void> injectDependencies() async {
 
   // lazy singleton
   locator.registerLazySingleton(() => GenericAppError('_message'));
-  locator.registerLazySingleton(() => IsarAgeLocalDataSource(IsarService()));
+  locator.registerLazySingleton(() => IsarAgeLocalDataSource(isarService));
   locator.registerLazySingleton(
-      () => AgeRepositoryImpl(IsarAgeLocalDataSource(IsarService())));
-  locator.registerLazySingleton(() => UpdateAgeUsecase(
-      AgeRepositoryImpl(IsarAgeLocalDataSource(IsarService()))));
+      () => AgeRepositoryImpl(IsarAgeLocalDataSource(isarService)));
   locator.registerLazySingleton(() =>
-      GetAgeUsecase(AgeRepositoryImpl(IsarAgeLocalDataSource(IsarService()))));
-  locator.registerLazySingleton(() => DeleteAgeUsecase(
-      AgeRepositoryImpl(IsarAgeLocalDataSource(IsarService()))));
-  locator.registerLazySingleton(() => CreateAgeUsecase(
-      AgeRepositoryImpl(IsarAgeLocalDataSource(IsarService()))));
+      UpdateAgeUsecase(AgeRepositoryImpl(IsarAgeLocalDataSource(isarService))));
+  locator.registerLazySingleton(() =>
+      GetAgeUsecase(AgeRepositoryImpl(IsarAgeLocalDataSource(isarService))));
+  locator.registerLazySingleton(() =>
+      DeleteAgeUsecase(AgeRepositoryImpl(IsarAgeLocalDataSource(isarService))));
+  locator.registerLazySingleton(() =>
+      CreateAgeUsecase(AgeRepositoryImpl(IsarAgeLocalDataSource(isarService))));
 }

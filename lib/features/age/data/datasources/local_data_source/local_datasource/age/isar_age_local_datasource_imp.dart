@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
@@ -19,10 +17,12 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
     try {
       // check existing age on db then get his id
       final dbstatus = await _isarService.getDBStatus();
-      if (dbstatus.isNull) {
+      if (dbstatus == null) {
         ageId = 0;
-      } else if (dbstatus.runtimeType == AgeModel) {
-        ageId = dbstatus?.id;
+      } else {
+        final db = await dbstatus.ageModels.where().findFirst();
+        final id = db?.id;
+        ageId = id! + 1;
       }
 
       // create age
@@ -58,9 +58,9 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   }
 
   @override
-  Future<Either<IBaseAppError, List<AgeModel>>> getAgeData() async {
+  Future<Either<IBaseAppError, AgeModel?>> getAgeData(Id id) async {
     try {
-      final age = await _isarService.getAge();
+      final age = await _isarService.getAge(id);
       return right(age);
     } catch (e, stackTrace) {
       debugPrintStack(stackTrace: stackTrace);

@@ -5,8 +5,13 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Placeholder(),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Streage"),
+          centerTitle: true,
+        ),
+      ),
     );
   }
 }
