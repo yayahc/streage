@@ -25,8 +25,8 @@ class AgeRepositoryImpl implements IAgeRepository {
   }
 
   @override
-  Future<Either<IBaseAppError, AgeModel?>> getAge(Id id) {
-    return _ageDataSource.getAgeData(id);
+  Future<Either<IBaseAppError, List<AgeModel?>>> getAges() {
+    return _ageDataSource.getAgeData();
   }
 
   @override

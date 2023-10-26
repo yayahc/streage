@@ -17,7 +17,13 @@ class IsarService {
     }
   }
 
-  Future<Isar?> getDBStatus() async {
+  Future<List<AgeModel?>> getAges() async {
+    final isar = await db;
+    final ageDB = isar.ageModels.where().findAll();
+    return ageDB;
+  }
+
+  Future<Isar?> getDB() async {
     final isar = await db;
     return isar;
   }

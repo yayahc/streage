@@ -7,7 +7,7 @@ import 'package:streage/features/age/domain/usecases/params/delete_age_param.dar
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
 
 abstract class IAgeRepository {
-  Future<Either<IBaseAppError, AgeModel?>> getAge(Id id);
+  Future<Either<IBaseAppError, List<AgeModel?>>> getAges();
 
   Future<Either<IBaseAppError, AgeModel>> createAge(CreateAgeParam param);
 

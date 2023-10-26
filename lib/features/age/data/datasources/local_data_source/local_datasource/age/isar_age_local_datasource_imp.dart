@@ -12,11 +12,21 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   late final int? ageId;
   IsarAgeLocalDataSource(this._isarService);
 
+  Future<Either<IBaseAppError, Isar?>> getDB() async {
+    try {
+      final db = await _isarService.getDB();
+      return right(db);
+    } catch (e, stacktrace) {
+      debugPrintStack(stackTrace: stacktrace);
+      return left(GenericAppError(stacktrace.toString()));
+    }
+  }
+
   @override
   Future<Either<IBaseAppError, AgeModel>> createAge(AgeModel param) async {
     try {
       // check existing age on db then get his id
-      final dbstatus = await _isarService.getDBStatus();
+      final dbstatus = await _isarService.getDB();
       if (dbstatus == null) {
         ageId = 0;
       } else {
@@ -58,9 +68,9 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   }
 
   @override
-  Future<Either<IBaseAppError, AgeModel?>> getAgeData(Id id) async {
+  Future<Either<IBaseAppError, List<AgeModel?>>> getAgeData() async {
     try {
-      final age = await _isarService.getAge(id);
+      final age = await _isarService.getAges();
       return right(age);
     } catch (e, stackTrace) {
       debugPrintStack(stackTrace: stackTrace);
