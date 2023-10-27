@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streage/core/extension/context_extension.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
+import 'package:streage/features/age/presentation/screens/date_form.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,11 +27,22 @@ class HomeScreen extends StatelessWidget {
                       Text('${data[4]} minutes'),
                       Text('${data[5]} secondes'),
                       Text('${data[6]} millisecondes'),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                          onPressed: () => _deleteAge(context),
+                          child: const Text('Delete'))
                     ],
                   ),
                 );
         },
       ),
     );
+  }
+
+  void _deleteAge(BuildContext context) async {
+    final cubit = context.ageCubit();
+    final widget = context.widgetCubit();
+    await cubit.deleteAge(0);
+    widget.changeWidget(const AgeForm());
   }
 }

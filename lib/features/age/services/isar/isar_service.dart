@@ -23,14 +23,18 @@ class IsarService {
     return ageDB;
   }
 
-  Future<Isar?> getDB() async {
-    final isar = await db;
-    return isar;
+  /// false means no data in db
+  /// true means there is data in db
+  Future<bool> getDBStatus() async {
+    final ages = await getAges();
+    return ages.isEmpty ? false : true;
   }
 
   Future<void> deleteAge(Id id) async {
     final isar = await db;
-    isar.ageModels.delete(id);
+    await isar.writeTxn(() async {
+      await isar.ageModels.delete(id);
+    });
   }
 
   Future<void> createAge(AgeModel age) async {

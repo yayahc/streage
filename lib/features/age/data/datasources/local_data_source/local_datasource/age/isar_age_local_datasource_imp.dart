@@ -9,30 +9,20 @@ import 'package:streage/features/age/services/isar/isar_service.dart';
 
 class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   final IsarService _isarService;
-  late final int? ageId;
+  late int? ageId;
   IsarAgeLocalDataSource(this._isarService);
-
-  Future<Either<IBaseAppError, Isar?>> getDB() async {
-    try {
-      final db = await _isarService.getDB();
-      return right(db);
-    } catch (e, stacktrace) {
-      debugPrintStack(stackTrace: stacktrace);
-      return left(GenericAppError(stacktrace.toString()));
-    }
-  }
 
   @override
   Future<Either<IBaseAppError, AgeModel>> createAge(AgeModel param) async {
     try {
       // check existing age on db then get his id
-      final dbstatus = await _isarService.getDB();
-      if (dbstatus == null) {
+      final dbstatus = await _isarService.getDBStatus();
+      if (!dbstatus) {
         ageId = 0;
       } else {
-        final db = await dbstatus.ageModels.where().findFirst();
-        final id = db?.id;
-        ageId = id! + 1;
+        final ages = await _isarService.getAges();
+        final lastAgeId = ages.last?.id;
+        ageId = lastAgeId;
       }
 
       // create age

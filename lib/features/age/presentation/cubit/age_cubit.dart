@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
@@ -17,7 +18,16 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
   AgeCubit(super.initialState, this._createAgeUsecase, this._deleteAgeUsecase,
       this._updateAgeUsecase);
 
-  Future<void> createAge(CreateAgeParam param) async {
+  Future<void> createAge(DateTime? date, TimeOfDay? time) async {
+    final param = CreateAgeParam(
+        years: date!.year,
+        months: date.month,
+        days: date.day,
+        hours: time!.hour,
+        minutes: time.minute,
+        seconds: 0,
+        milliseconds: 0,
+        microseconds: 0);
     final ageTrigger = await _createAgeUsecase.trigger(param);
     if (ageTrigger.isRight()) {
       final age = ageTrigger.fold((l) => null, (r) => r);
@@ -30,7 +40,8 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
     }
   }
 
-  Future<void> deleteAge(DeleteAgeParam param) async {
+  Future<void> deleteAge(Id id) async {
+    final param = DeleteAgeParam(id: id);
     final ageTrigger = await _deleteAgeUsecase.trigger(param);
     if (ageTrigger.isLeft()) {
       /// [TODO] print error with scafold snackbar.
@@ -49,8 +60,9 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
   }
 
   Stream<List<int>> ageStream() {
-    // final age = state.first!;
-    DateTime birthDate = DateTime(1999, 1, 14, 0, 0, 0);
+    final age = state.first!;
+    DateTime birthDate = DateTime(age.years, age.months, age.days, age.hours,
+        age.minutes, age.seconds, age.milliseconds, age.microseconds);
 
     Timer.periodic(const Duration(microseconds: 1), (timer) {
       final now = DateTime.now();

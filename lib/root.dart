@@ -21,7 +21,7 @@ class Root extends StatelessWidget {
         providers: _getProviders(context),
         child: MaterialApp(
             home: BlocBuilder<WidgetCubit, Widget>(
-                builder: (context, state) => state)));
+                builder: (_, state) => state)));
   }
 
   List<BlocProvider> _getProviders(BuildContext context) {

@@ -17,9 +17,9 @@ Future<void> main(List<String> args) async {
 
   late final Widget baseScreen;
   if (initD.isEmpty) {
-    baseScreen = const HomeScreen();
-  } else {
     baseScreen = const AgeForm();
+  } else {
+    baseScreen = const HomeScreen();
   }
 
   runApp(Root(
