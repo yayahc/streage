@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
   void _deleteAge(BuildContext context) async {
     final cubit = context.ageCubit();
     final widget = context.widgetCubit();
-    await cubit.deleteAge(0);
+    await cubit.deleteAge(cubit.state.first!.id!);
     widget.changeWidget(const AgeForm());
   }
 }

@@ -17,6 +17,18 @@ class _AgeFormState extends State<AgeForm> {
   late TimeOfDay? time;
 
   @override
+  void initState() {
+    super.initState();
+    date = null;
+    time = null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +56,14 @@ class _AgeFormState extends State<AgeForm> {
                 },
                 child: const Text('Time')),
             ElevatedButton(
-                onPressed: () => _ready(context), child: const Text('Save'))
+                onPressed: () {
+                  if (date == null || time == null) {
+                    null;
+                  } else {
+                    _ready(context);
+                  }
+                },
+                child: const Text('Save'))
           ],
         ),
       ),
