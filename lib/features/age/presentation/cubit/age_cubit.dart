@@ -11,7 +11,6 @@ import 'package:streage/features/age/domain/usecases/params/delete_age_param.dar
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
 
 class AgeCubit extends Cubit<List<AgeModel?>> {
-  final dateStream = StreamController<List<int>>();
   final CreateAgeUsecase _createAgeUsecase;
   final DeleteAgeUsecase _deleteAgeUsecase;
   final UpdateAgeUsecase _updateAgeUsecase;
@@ -31,8 +30,8 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
     final ageTrigger = await _createAgeUsecase.trigger(param);
     if (ageTrigger.isRight()) {
       final age = ageTrigger.fold((l) => null, (r) => r);
-      state.add(age);
-      emit(state);
+      final ageState = [...state, age];
+      emit(ageState);
     } else {
       /// [TODO] print error with scafold snackbar.
       final error = ageTrigger.fold((l) => l, (r) => null);
@@ -47,8 +46,10 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
       /// [TODO] print error with scafold snackbar.
       final error = ageTrigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
+    } else {
+      final ages = state.where((element) => element?.id != param.id).toList();
+      emit(ages);
     }
-    dateStream.close();
   }
 
   Future<void> updateAge(UpdateAgeParam param) async {
@@ -61,27 +62,54 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
   }
 
   Stream<List<int>> ageStream() {
+    late StreamController<List<int>> dateStream = StreamController<List<int>>();
+
     final age = state.first!;
-    DateTime birthDate = DateTime(age.years, age.months, age.days, age.hours,
-        age.minutes, age.seconds, age.milliseconds, age.microseconds);
+    DateTime birthDate = DateTime(age.years, age.months, age.days);
 
     Timer.periodic(const Duration(microseconds: 1), (timer) {
       final now = DateTime.now();
 
-      Duration difference = now.difference(birthDate);
-      final year = difference.inDays ~/ 365;
-      int remainingDays = difference.inDays % 365;
-      final month = remainingDays ~/ 30;
-      remainingDays = remainingDays % 30;
-      final day = remainingDays;
-      final hour = difference.inHours % 24;
-      final minute = difference.inMinutes % 60;
-      final second = difference.inSeconds % 60;
-      final millisecond = difference.inMilliseconds % 1000;
-      final microsecond = difference.inMicroseconds % 1000;
+      // Calculate years
+      int year = now.year - birthDate.year;
+      if (now.month < birthDate.month ||
+          (now.month == birthDate.month && now.day < birthDate.day)) {
+        year--;
+      }
+
+      // Calculate days
+      int day = now.day - birthDate.day;
+
+      // Calculate months
+      int month;
+      switch (now.month - birthDate.month) {
+        case int n when n > 0:
+          month = now.month - birthDate.month;
+          break;
+        case int n when n < 0:
+          month = now.month - birthDate.month + 12;
+          break;
+        default:
+          if (day < 0) {
+            final daysInLastMonth = DateTime(now.year, now.month, 0).day;
+            month = 11;
+            day = daysInLastMonth + day;
+          } else {
+            month = 0;
+          }
+      }
+
+      // Calculate time
+      int hour = now.hour - birthDate.hour;
+      int minute = now.minute - birthDate.minute;
+      int second = now.second - birthDate.second;
+      int millisecond = now.millisecond - birthDate.millisecond;
+      int microsecond = now.microsecond - birthDate.microsecond;
+
       dateStream.add(
           [year, month, day, hour, minute, second, millisecond, microsecond]);
     });
+
     return dateStream.stream;
   }
 }
