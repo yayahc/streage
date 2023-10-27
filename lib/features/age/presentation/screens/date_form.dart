@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// [TODO] get inputs and save them to isar
+
 class AgeForm extends StatefulWidget {
   const AgeForm({super.key});
 
@@ -10,8 +12,12 @@ class AgeForm extends StatefulWidget {
 class _AgeFormState extends State<AgeForm> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Streage'),
+        centerTitle: true,
+      ),
+      body: const Center(
         child: Column(
           children: [],
         ),

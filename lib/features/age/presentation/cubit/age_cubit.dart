@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
-import 'package:streage/features/age/data/datasources/local_data_source/local_datasource/age/isar_age_local_datasource_imp.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
@@ -12,6 +10,7 @@ import 'package:streage/features/age/domain/usecases/params/delete_age_param.dar
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
 
 class AgeCubit extends Cubit<List<AgeModel?>> {
+  final dateStream = StreamController<List<int>>();
   final CreateAgeUsecase _createAgeUsecase;
   final DeleteAgeUsecase _deleteAgeUsecase;
   final UpdateAgeUsecase _updateAgeUsecase;
@@ -49,11 +48,26 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
     }
   }
 
-  Stream<DateTime> streamDate() {
-    final dateStream = StreamController<DateTime>();
-    Timer.periodic(const Duration(milliseconds: 1), (timer) {
+  Stream<List<int>> ageStream() {
+    // final age = state.first!;
+    DateTime birthDate = DateTime(1999, 1, 14, 0, 0, 0);
+
+    Timer.periodic(const Duration(microseconds: 1), (timer) {
       final now = DateTime.now();
-      dateStream.add(now);
+
+      Duration difference = now.difference(birthDate);
+      final year = difference.inDays ~/ 365;
+      int remainingDays = difference.inDays % 365;
+      final month = remainingDays ~/ 30;
+      remainingDays = remainingDays % 30;
+      final day = remainingDays;
+      final hour = difference.inHours % 24;
+      final minute = difference.inMinutes % 60;
+      final second = difference.inSeconds % 60;
+      final millisecond = difference.inMilliseconds % 1000;
+      final microsecond = difference.inMicroseconds % 1000;
+      dateStream.add(
+          [year, month, day, hour, minute, second, millisecond, microsecond]);
     });
     return dateStream.stream;
   }
