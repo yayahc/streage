@@ -48,6 +48,7 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
       final error = ageTrigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
     }
+    dateStream.close();
   }
 
   Future<void> updateAge(UpdateAgeParam param) async {
