@@ -42,10 +42,10 @@ Future<void> injectDependencies(GetIt locator, IsarService isarService) async {
   locator.registerSingleton(AgeController());
   locator.registerSingleton(AppAssets());
   locator.registerSingleton(AppTexts());
+  locator.registerSingleton(IsarAgeLocalDataSource(isarService));
 
   // lazy singleton
   locator.registerLazySingleton(() => GenericAppError('_message'));
-  locator.registerLazySingleton(() => IsarAgeLocalDataSource(isarService));
   locator.registerLazySingleton(
       () => AgeRepositoryImpl(IsarAgeLocalDataSource(isarService)));
   locator.registerLazySingleton(() =>
