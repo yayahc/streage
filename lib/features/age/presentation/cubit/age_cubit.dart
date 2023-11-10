@@ -78,7 +78,7 @@ class AgeCubit extends Cubit<List<AgeModel?>> {
       }
 
       // Calculate days
-      int day = now.day - birthDate.day;
+      int day = (now.day - birthDate.day).abs();
 
       // Calculate months
       int month;

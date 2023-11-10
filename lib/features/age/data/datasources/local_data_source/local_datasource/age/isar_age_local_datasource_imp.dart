@@ -5,7 +5,7 @@ import 'package:streage/core/errors/generic_app_error.dart';
 import 'package:streage/core/errors/i_base_app_error.dart';
 import 'package:streage/features/age/data/datasources/local_data_source/local_datasource/age/i_age_local_datasource.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
-import 'package:streage/features/age/services/isar/isar_service.dart';
+import 'package:streage/core/services/isar/isar_service.dart';
 
 class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   final IsarService _isarService;

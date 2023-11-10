@@ -12,7 +12,7 @@ import 'package:streage/features/age/domain/usecases/age_usecase/update_age_usec
 import 'package:streage/features/age/domain/usecases/params/create_age_param.dart';
 import 'package:streage/features/age/domain/usecases/params/delete_age_param.dart';
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
-import 'package:streage/features/age/services/isar/isar_service.dart';
+import 'package:streage/core/services/isar/isar_service.dart';
 
 Future<void> injectDependencies(GetIt locator, IsarService isarService) async {
   // singleton
