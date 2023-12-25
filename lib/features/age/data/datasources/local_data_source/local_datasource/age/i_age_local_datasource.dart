@@ -4,7 +4,9 @@ import 'package:streage/core/errors/i_base_app_error.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 
 abstract class IAgeLocalDataSource {
-  Future<Either<IBaseAppError, List<AgeModel?>>> getAgeData();
+  Future<Either<IBaseAppError, List<AgeModel?>>> getAgesData();
+
+  Future<Either<IBaseAppError, AgeModel?>> getAgeInfo(int id);
 
   Future<Either<IBaseAppError, AgeModel>> createAge(AgeModel param);
 

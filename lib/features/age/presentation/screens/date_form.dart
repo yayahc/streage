@@ -3,8 +3,7 @@ import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:streage/core/extension/context_extension.dart';
 import 'package:streage/features/age/presentation/screens/home_screen.dart';
 
-/// [TODO] get inputs and save them to isar
-
+/// [TODO] get inputs and save them to isarDB
 class AgeForm extends StatefulWidget {
   const AgeForm({super.key});
 

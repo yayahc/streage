@@ -1,12 +1,15 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:streage/core/errors/i_base_app_error.dart';
 import 'package:streage/features/age/data/datasources/local_data_source/local_datasource/age/i_age_local_datasource.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/repositories/age/i_age_repository.dart';
 import 'package:streage/features/age/domain/usecases/params/create_age_param.dart';
 import 'package:streage/features/age/domain/usecases/params/delete_age_param.dart';
+import 'package:streage/features/age/domain/usecases/params/read_age_param.dart';
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
 
+@LazySingleton(as: IAgeRepository)
 class AgeRepositoryImpl implements IAgeRepository {
   final IAgeLocalDataSource _ageDataSource;
 
@@ -25,12 +28,17 @@ class AgeRepositoryImpl implements IAgeRepository {
 
   @override
   Future<Either<IBaseAppError, List<AgeModel?>>> getAges() {
-    return _ageDataSource.getAgeData();
+    return _ageDataSource.getAgesData();
   }
 
   @override
   Future<Either<IBaseAppError, AgeModel>> updateAge(UpdateAgeParam param) {
     final age = AgeModel.fromUpdateAgeParam(param: param);
     return _ageDataSource.updateAgeData(age);
+  }
+
+  @override
+  Future<Either<IBaseAppError, AgeModel?>> getAge(ReadAgeParam param) {
+    return _ageDataSource.getAgeInfo(param.id);
   }
 }

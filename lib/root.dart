@@ -6,12 +6,9 @@ import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usec
 import 'package:streage/features/age/domain/usecases/age_usecase/update_age_usecase.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
 import 'package:streage/features/age/presentation/cubit/widget_cubit.dart';
-import 'di_config.dart';
 
 class Root extends StatelessWidget {
-  final Widget baseScreen;
-  final List<AgeModel?> initialData;
-  const Root({super.key, required this.initialData, required this.baseScreen});
+  const Root({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +20,6 @@ class Root extends StatelessWidget {
   }
 
   List<BlocProvider> _getProviders(BuildContext context) {
-    final ageCubit = AgeCubit(initialData, locator.get<CreateAgeUsecase>(),
-        locator.get<DeleteAgeUsecase>(), locator.get<UpdateAgeUsecase>());
-    final widgetCubit = WidgetCubit(baseScreen);
-    return [
-      BlocProvider<AgeCubit>(create: (context) => ageCubit),
-      BlocProvider<WidgetCubit>(create: (context) => widgetCubit)
-    ];
+    return [];
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
 import 'package:streage/core/errors/generic_app_error.dart';
 import 'package:streage/core/errors/i_base_app_error.dart';
@@ -7,27 +8,17 @@ import 'package:streage/features/age/data/datasources/local_data_source/local_da
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/core/services/isar/isar_service.dart';
 
+@Singleton(as: IAgeLocalDataSource)
 class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   final IsarService _isarService;
-  late int? ageId;
   IsarAgeLocalDataSource(this._isarService);
 
   @override
   Future<Either<IBaseAppError, AgeModel>> createAge(AgeModel param) async {
     try {
-      // check existing age on db then get his id
-      final dbstatus = await _isarService.getDBStatus();
-      if (!dbstatus) {
-        ageId = 0;
-      } else {
-        final ages = await _isarService.getAges();
-        final lastAgeId = ages.last?.id;
-        ageId = lastAgeId;
-      }
-
-      // create age
+      // Create age
       final age = AgeModel.createAge(
-          id: ageId,
+          id: Isar.autoIncrement,
           years: param.years,
           months: param.months,
           days: param.days,
@@ -37,7 +28,7 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
           milliseconds: param.milliseconds,
           microseconds: param.microseconds);
 
-      // save in async the age on the db
+      // Save in async the age on the db
       await _isarService.createAge(age);
       return right(age);
     } catch (e, stackTrace) {
@@ -58,9 +49,21 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   }
 
   @override
-  Future<Either<IBaseAppError, List<AgeModel?>>> getAgeData() async {
+  Future<Either<IBaseAppError, AgeModel>> updateAgeData(AgeModel param) async {
     try {
-      final age = await _isarService.getAges();
+      // Update element that have param.id
+      await _isarService.updateAge(param);
+      return right(param);
+    } catch (e, stackTrace) {
+      debugPrintStack(stackTrace: stackTrace);
+      return left(GenericAppError(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<IBaseAppError, AgeModel?>> getAgeInfo(int id) async {
+    try {
+      final age = await _isarService.getAge(id);
       return right(age);
     } catch (e, stackTrace) {
       debugPrintStack(stackTrace: stackTrace);
@@ -69,12 +72,10 @@ class IsarAgeLocalDataSource implements IAgeLocalDataSource {
   }
 
   @override
-  Future<Either<IBaseAppError, AgeModel>> updateAgeData(AgeModel param) async {
+  Future<Either<IBaseAppError, List<AgeModel?>>> getAgesData() async {
     try {
-      // update element that have param.id
-      await _isarService.updateAge(param);
-
-      return right(param);
+      final age = await _isarService.getAges();
+      return right(age);
     } catch (e, stackTrace) {
       debugPrintStack(stackTrace: stackTrace);
       return left(GenericAppError(e.toString()));

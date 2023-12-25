@@ -4,24 +4,12 @@ import 'package:streage/features/age/presentation/screens/date_form.dart';
 import 'package:streage/features/age/presentation/screens/home_screen.dart';
 import 'package:streage/core/services/isar/isar_service.dart';
 import 'package:streage/root.dart';
-import 'di_config.dart';
+import 'di.dart';
 
-Future<void> main(List<String> args) async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final isarService = IsarService();
-  configureDependencies(isarService);
-  final initD = await getData();
+  configureDependencies();
 
-  late final Widget baseScreen;
-  if (initD.isEmpty) {
-    baseScreen = const AgeForm();
-  } else {
-    baseScreen = const HomeScreen();
-  }
-
-  runApp(Root(
-    initialData: initD,
-    baseScreen: baseScreen,
-  ));
+  runApp(const Root());
 }

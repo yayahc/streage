@@ -1,7 +1,9 @@
+import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 
+@Singleton()
 class IsarService {
   late Future<Isar> db;
   IsarService() {
