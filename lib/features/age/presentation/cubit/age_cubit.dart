@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
 import 'package:streage/core/extension/context_extension.dart';
-import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/read_age_uscase.dart';
@@ -29,6 +29,7 @@ class AgeCubit extends Cubit<AgeState> {
   }
 
   Future<void> createAge(DateTime? date, TimeOfDay? time) async {
+    emit(AgeIsProcessing());
     final param = CreateAgeParam(
         years: date!.year,
         months: date.month,
@@ -42,10 +43,12 @@ class AgeCubit extends Cubit<AgeState> {
     if (ageTrigger.isRight()) {
       final age = ageTrigger.fold((l) => null, (r) => r);
       emit(AgeIsDone([age]));
+      navKey.currentContext?.push(AppRoutes.home);
     } else {
-      /// [TODO] print error with scafold snackbar.
       final error = ageTrigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
+      navKey.currentContext
+          ?.showSnackBar("Error while creating age, ${error!.getError()}");
     }
   }
 
@@ -53,9 +56,10 @@ class AgeCubit extends Cubit<AgeState> {
     final param = DeleteAgeParam(id: id);
     final ageTrigger = await _deleteAgeUsecase.trigger(param);
     if (ageTrigger.isLeft()) {
-      /// [TODO] print error with scafold snackbar.
       final error = ageTrigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
+      navKey.currentContext
+          ?.showSnackBar("Error while creating age, ${error!.getError()}");
     } else {
       fetchAges();
     }
@@ -64,9 +68,10 @@ class AgeCubit extends Cubit<AgeState> {
   Future<void> updateAge(UpdateAgeParam param) async {
     final ageTrigger = await _updateAgeUsecase.trigger(param);
     if (ageTrigger.isLeft()) {
-      /// [TODO] print error with scafold snackbar.
       final error = ageTrigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
+      navKey.currentContext
+          ?.showSnackBar("Error while creating age, ${error!.getError()}");
     }
   }
 
@@ -83,7 +88,6 @@ class AgeCubit extends Cubit<AgeState> {
         emit(AgeIsDone([ages]));
       }
     } else {
-      /// [TODO] print error with scafold snackbar.
       final error = trigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
       emit(AgeFailed());
