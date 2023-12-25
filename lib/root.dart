@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:streage/di.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
@@ -20,6 +21,10 @@ class Root extends StatelessWidget {
   }
 
   List<BlocProvider> _getProviders(BuildContext context) {
-    return [];
+    return [
+      BlocProvider(
+        create: (context) => locator.get<AgeCubit>(),
+      )
+    ];
   }
 }

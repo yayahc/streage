@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:streage/core/extension/context_extension.dart';
+import 'package:streage/di.dart';
+import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
+import 'package:streage/features/age/presentation/cubit/widget_cubit.dart';
 import 'package:streage/features/age/presentation/screens/home_screen.dart';
 
 /// [TODO] get inputs and save them to isarDB
@@ -89,8 +93,8 @@ class _AgeFormState extends State<AgeForm> {
   }
 
   void _ready(BuildContext context) async {
-    final cubit = context.ageCubit();
-    final widget = context.widgetCubit();
+    final cubit = locator.get<AgeCubit>();
+    final widget = BlocProvider.of<WidgetCubit>(context);
     await cubit.createAge(date, time);
     widget.changeWidget(const HomeScreen());
   }

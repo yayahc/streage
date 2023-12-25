@@ -10,7 +10,7 @@ class CreateAgeUsecase implements Usecase<CreateAgeParam, AgeModel?> {
   CreateAgeUsecase(this._ageRepository);
 
   @override
-  Future<Either<IBaseAppError, AgeModel?>> trigger(CreateAgeParam param) {
+  Future<Either<IBaseAppError, AgeModel>> trigger(CreateAgeParam param) {
     return _ageRepository.createAge(param);
   }
 }
