@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:isar/isar.dart';
+import 'package:streage/core/extension/context_extension.dart';
 import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
@@ -13,6 +14,7 @@ import 'package:streage/features/age/domain/usecases/params/delete_age_param.dar
 import 'package:streage/features/age/domain/usecases/params/read_age_param.dart';
 import 'package:streage/features/age/domain/usecases/params/update_age_param.dart';
 import 'package:streage/features/age/presentation/cubit/age_state.dart';
+import 'package:streage/router.dart';
 
 @Singleton()
 class AgeCubit extends Cubit<AgeState> {
@@ -20,8 +22,9 @@ class AgeCubit extends Cubit<AgeState> {
   final DeleteAgeUsecase _deleteAgeUsecase;
   final UpdateAgeUsecase _updateAgeUsecase;
   final ReadAgeUsecase _readAgeUsecase;
-  AgeCubit(super.initialState, this._createAgeUsecase, this._deleteAgeUsecase,
-      this._updateAgeUsecase, this._readAgeUsecase) {
+  AgeCubit(this._createAgeUsecase, this._deleteAgeUsecase,
+      this._updateAgeUsecase, this._readAgeUsecase)
+      : super(AgeInitial()) {
     fetchAges();
   }
 
@@ -74,11 +77,17 @@ class AgeCubit extends Cubit<AgeState> {
     final trigger = await _readAgeUsecase.trigger(readAgeParam);
     if (trigger.isRight()) {
       final ages = trigger.fold((l) => null, (r) => r);
-      emit(AgeIsDone([ages]));
+      if (ages == null) {
+        emit(AgeIsDone(const []));
+      } else {
+        emit(AgeIsDone([ages]));
+      }
     } else {
       /// [TODO] print error with scafold snackbar.
       final error = trigger.fold((l) => l, (r) => null);
       debugPrint(error?.getError());
+      emit(AgeFailed());
+      navKey.currentContext?.showSnackBar(error!.getError());
     }
   }
 }

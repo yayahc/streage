@@ -44,7 +44,7 @@ dependencies:
   bloc: ^8.1.2
   flutter_rounded_date_picker: ^3.0.4
   flutter_bloc: ^8.1.3
-  go_router: ^12.1.1
+  go_router: ^13.0.0
   isar_generator: ^3.1.0+1
   injectable: ^2.3.2
   injectable_generator: ^2.4.1
@@ -110,3 +110,4 @@ scripts:
   pub-get: ".fvm/flutter_sdk/bin/flutter pub get"
   gen-watch: ".fvm/flutter_sdk/bin/flutter pub run build_runner watch"
   gen-build: ".fvm/flutter_sdk/bin/flutter pub run build_runner build"
+  test: ".fvm/flutter_sdk/bin/flutter test"

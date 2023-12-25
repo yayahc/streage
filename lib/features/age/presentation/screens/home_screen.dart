@@ -8,7 +8,6 @@ import 'package:streage/features/age/domain/models/age_model.dart';
 import 'package:streage/features/age/domain/models/entities/age.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
 import 'package:streage/features/age/presentation/cubit/age_state.dart';
-import 'package:streage/features/age/presentation/cubit/widget_cubit.dart';
 import 'package:streage/features/age/presentation/screens/date_form.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,7 +41,26 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text("Echec de lecture de l'age"),
           );
         } else if (state is AgeIsDone) {
-          return _ageBuilder(context, state.ages.first!);
+          if (state.ages.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Aucun enregistrement"),
+                  InkWell(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AgeForm(),
+                        )),
+                    child: const Icon(Icons.add),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return _ageBuilder(context, state.ages.first!);
+          }
         }
         return const SizedBox();
       }),
@@ -51,9 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _deleteAge(BuildContext context, AgeModel age) async {
     final cubit = locator.get<AgeCubit>();
-    final widget = BlocProvider.of<WidgetCubit>(context);
     await cubit.deleteAge(age.id!);
-    widget.changeWidget(const AgeForm());
   }
 
   Stream<List<int>> ageStream(AgeModel age) {

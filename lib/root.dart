@@ -6,7 +6,8 @@ import 'package:streage/features/age/domain/usecases/age_usecase/create_age_usec
 import 'package:streage/features/age/domain/usecases/age_usecase/delete_age_usecase.dart';
 import 'package:streage/features/age/domain/usecases/age_usecase/update_age_usecase.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
-import 'package:streage/features/age/presentation/cubit/widget_cubit.dart';
+import 'package:streage/features/age/presentation/screens/home_screen.dart';
+import 'package:streage/router.dart';
 
 class Root extends StatelessWidget {
   const Root({super.key});
@@ -15,14 +16,15 @@ class Root extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: _getProviders(context),
-        child: MaterialApp(
-            home: BlocBuilder<WidgetCubit, Widget>(
-                builder: (_, state) => state)));
+        child: MaterialApp.router(
+          routerConfig: AppRouter.router,
+          debugShowCheckedModeBanner: false,
+        ));
   }
 
   List<BlocProvider> _getProviders(BuildContext context) {
     return [
-      BlocProvider(
+      BlocProvider<AgeCubit>(
         create: (context) => locator.get<AgeCubit>(),
       )
     ];

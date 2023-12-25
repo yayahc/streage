@@ -4,7 +4,6 @@ import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:streage/core/extension/context_extension.dart';
 import 'package:streage/di.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
-import 'package:streage/features/age/presentation/cubit/widget_cubit.dart';
 import 'package:streage/features/age/presentation/screens/home_screen.dart';
 
 /// [TODO] get inputs and save them to isarDB
@@ -61,7 +60,7 @@ class _AgeFormState extends State<AgeForm> {
             ElevatedButton(
                 onPressed: () {
                   if (date == null || time == null) {
-                    null;
+                    context.showSnackBar("Date or Time should not be null");
                   } else {
                     _ready(context);
                   }
@@ -94,8 +93,12 @@ class _AgeFormState extends State<AgeForm> {
 
   void _ready(BuildContext context) async {
     final cubit = locator.get<AgeCubit>();
-    final widget = BlocProvider.of<WidgetCubit>(context);
     await cubit.createAge(date, time);
-    widget.changeWidget(const HomeScreen());
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ));
   }
 }
