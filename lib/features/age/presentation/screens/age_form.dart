@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:streage/core/extension/context_extension.dart';
 import 'package:streage/core/extension/string_extension.dart';
+import 'package:streage/core/ui/widgets/buttons/icon_button.dart';
 import 'package:streage/di.dart';
 import 'package:streage/features/age/presentation/cubit/age_cubit.dart';
 import 'package:streage/features/age/presentation/screens/home_screen.dart';
@@ -20,35 +22,53 @@ class AgeForm extends StatefulWidget {
 class _AgeFormState extends State<AgeForm> {
   final ValueNotifier<DateTime?> _dateNotifier = ValueNotifier(null);
   final ValueNotifier<TimeOfDay?> _timeNotifier = ValueNotifier(null);
+  final ValueNotifier<bool> _saveButtonEnable = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
+
+    for (var listener in [_dateNotifier, _timeNotifier]) {
+      listener.addListener(() {
+        _saveButtonEnable.value = _isValidate();
+      });
+    }
+  }
+
+  bool _isValidate() {
+    if (_dateNotifier.value != null && _timeNotifier.value != null) {
+      return true;
+    }
+    return false;
   }
 
   @override
   void dispose() {
     _dateNotifier.dispose();
     _timeNotifier.dispose();
+    _saveButtonEnable.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            "Pick your birth date".light(),
-            context.gaps.small,
-            _buildDate(context),
-            context.gaps.large,
-            _buildTime(context),
-            context.gaps.large,
-            _buildSave(context),
-          ],
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.sp),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              "Pick your birth date".light(),
+              context.gaps.small,
+              _buildDate(context),
+              context.gaps.large,
+              _buildTime(context),
+              context.gaps.large,
+              _buildSave(context),
+            ],
+          ),
         ),
       ),
     );
@@ -76,18 +96,17 @@ class _AgeFormState extends State<AgeForm> {
   Widget _buildDate(BuildContext context) {
     return Row(
       children: [
-        InkWell(
-          onTap: () => _showDatePicker(context),
-          child: "Date".light(),
-        ),
+        DefaultIconButton(
+            callback: () => _showDatePicker(context),
+            icon: Icons.calendar_month),
+        context.gaps.small,
         ListenableBuilder(
             listenable: _dateNotifier,
             builder: (context, _) {
               if (_dateNotifier.value == null) {
                 return "...".light();
               }
-              return DateFormat.yMd("dd-MM-yyyy")
-                  .format(_dateNotifier.value!)
+              return "${_dateNotifier.value!.day}-${_dateNotifier.value!.month}-${_dateNotifier.value!.year}"
                   .light();
             }),
       ],
@@ -97,17 +116,17 @@ class _AgeFormState extends State<AgeForm> {
   Widget _buildTime(BuildContext context) {
     return Row(
       children: [
-        InkWell(
-          onTap: () => _showTimePicker(context),
-          child: "Time".light(),
-        ),
+        DefaultIconButton(
+            callback: () => _showTimePicker(context), icon: Icons.timelapse),
+        context.gaps.small,
         ListenableBuilder(
           listenable: _timeNotifier,
           builder: (context, _) {
             if (_timeNotifier.value == null) {
               return "...".light();
             }
-            return _timeNotifier.value.toString().light();
+            return "${_timeNotifier.value?.hour}:${_timeNotifier.value?.minute}"
+                .light();
           },
         )
       ],
@@ -115,16 +134,16 @@ class _AgeFormState extends State<AgeForm> {
   }
 
   Widget _buildSave(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        if (_dateNotifier.value == null || _timeNotifier.value == null) {
-          context.showSnackBar("Date or Time should not be null");
-        } else {
-          final cubit = locator.get<AgeCubit>();
-          await cubit.createAge(_dateNotifier.value, _timeNotifier.value);
-        }
-      },
-      child: "Save".medium(),
-    );
+    return "Save".medium(color: context.colors.white).asPrimaryTextButton(
+        callback: () => _onSaveButtonPressed(), enable: _saveButtonEnable);
+  }
+
+  Future<void> _onSaveButtonPressed() async {
+    if (_isValidate()) {
+      final cubit = locator.get<AgeCubit>();
+      await cubit.createAge(_dateNotifier.value, _timeNotifier.value);
+    } else {
+      context.showSnackBar("Date or Time should not be null");
+    }
   }
 }
